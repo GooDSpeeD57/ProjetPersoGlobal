@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: html('Mon compte', ~{::main})}">
+<main>
+<div class="container py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <div style="width:64px;height:64px;background:linear-gradient(135deg,#7c3aed,#a78bfa);border-radius:50%;display:flex;align-items:center;justify-content:center">
+            <i class="bi bi-person-fill text-white fs-3"></i>
+        </div>
+        <div>
+            <h3 class="mb-0 fw-bold" th:text="${client?.get('prenom')} + ' ' + ${client?.get('nom')}">Prénom Nom</h3>
+            <span class="text-muted" th:text="${client?.get('email')}">email@exemple.fr</span>
+            <span th:if="${session.isUltimate}" class="badge ms-2" style="background:linear-gradient(135deg,#7c3aed,#f59e0b)">⭐ ULTIMATE</span>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Carte points fidélité -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <p class="mb-1 opacity-75 small fw-semibold text-uppercase">Points fidélité</p>
+                            <div class="display-5 fw-bold" th:text="${points?.get('pointsSolde')} ?: '0'">0</div>
+                            <small class="opacity-75">points disponibles</small>
+                        </div>
+                        <div class="fs-1 opacity-50">🏆</div>
+                    </div>
+                    <hr class="border-white opacity-25 my-3"/>
+                    <div class="d-flex justify-content-between small opacity-75">
+                        <span>Total cumulé : <strong th:text="${points?.get('pointsTotal')} ?: '0'">0</strong></span>
+                        <span>Utilisés : <strong th:text="${points?.get('pointsUtilises')} ?: '0'">0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infos personnelles -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header bg-white fw-semibold py-3">
+                    <i class="bi bi-person-circle me-2 text-purple"></i>Informations personnelles
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label text-muted small">Prénom</label>
+                            <div class="fw-semibold" th:text="${client?.get('prenom')}">–</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small">Nom</label>
+                            <div class="fw-semibold" th:text="${client?.get('nom')}">–</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small">Email</label>
+                            <div class="fw-semibold" th:text="${client?.get('email')}">–</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small">Téléphone</label>
+                            <div class="fw-semibold" th:text="${client?.get('telephone')} ?: 'Non renseigné'">–</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-muted small">Membre depuis</label>
+                            <div class="fw-semibold" th:text="${client?.get('dateInscription')} ?: '–'">–</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label text-muted small">Adresse</label>
+                            <div class="fw-semibold" th:text="${client?.get('adresse')} ?: 'Non renseignée'">–</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Abonnement ULTIMATE -->
+        <div class="col-12">
+            <div class="card" th:if="${session.isUltimate and abonnement != null}">
+                <div class="card-header py-3" style="background:linear-gradient(135deg,#7c3aed,#f59e0b);color:#fff">
+                    <i class="bi bi-star-fill me-2"></i>Mon abonnement ULTIMATE
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-4">
+                                    <small class="text-muted">Statut</small>
+                                    <div><span class="badge bg-success" th:text="${abonnement?.get('statut')} ?: 'ACTIF'">ACTIF</span></div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Début</small>
+                                    <div class="fw-semibold small" th:text="${abonnement?.get('dateDebut')}">–</div>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Renouvellement</small>
+                                    <div class="fw-semibold small" th:text="${abonnement?.get('dateFin')}">–</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a th:href="@{/abonnement}" class="btn btn-outline-secondary btn-sm">Gérer l'abonnement</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-dashed" th:unless="${session.isUltimate}" style="border:2px dashed #7c3aed">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 mb-2">⭐</div>
+                    <h5 class="fw-bold">Devenez membre ULTIMATE</h5>
+                    <p class="text-muted mb-3">Accès prioritaire, remises exclusives, garanties prolongées et bien plus.</p>
+                    <a th:href="@{/abonnement}" class="btn btn-purple">Découvrir l'abonnement ULTIMATE</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique des achats -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white fw-semibold py-3 d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-receipt me-2"></i>Historique des achats</span>
+                    <span class="badge bg-secondary" th:text="${factures != null ? factures.size() : 0} + ' commande(s)'">0 commande(s)</span>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${factures == null or factures.isEmpty()}" class="text-center py-5 text-muted">
+                        <i class="bi bi-bag-x fs-1 d-block mb-2"></i>
+                        Aucun achat pour le moment
+                    </div>
+                    <div class="table-responsive" th:unless="${factures == null or factures.isEmpty()}">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>N° Facture</th>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="facture : ${factures}">
+                                    <td class="fw-mono text-muted small" th:text="'#' + ${facture.get('id')}">–</td>
+                                    <td th:text="${facture.get('dateFacture')}">–</td>
+                                    <td class="fw-semibold" th:text="${facture.get('montantTotal')} + ' €'">–</td>
+                                    <td>
+                                        <span class="badge bg-success" th:if="${facture.get('statut') == 'PAYEE'}">Payée</span>
+                                        <span class="badge bg-warning text-dark" th:unless="${facture.get('statut') == 'PAYEE'}" th:text="${facture.get('statut')}">–</span>
+                                    </td>
+                                    <td><a th:href="@{/compte/facture/{id}(id=${facture.get('id')})}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone danger -->
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header text-danger bg-white fw-semibold py-3">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Zone sensible
+                </div>
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold">Supprimer mon compte</div>
+                        <small class="text-muted">Cette action est irréversible. Toutes vos données seront supprimées.</small>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalSuppression">
+                        Supprimer mon compte
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal suppression -->
+<div class="modal fade" id="modalSuppression" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Supprimer le compte</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous certain de vouloir supprimer définitivement votre compte ?</p>
+                <p class="text-muted small">Cette action supprimera toutes vos données, votre historique d'achat et vos points de fidélité.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form th:action="@{/compte/supprimer}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Supprimer définitivement</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+</html>
