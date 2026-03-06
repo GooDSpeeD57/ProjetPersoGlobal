@@ -15,7 +15,7 @@ public class CatalogueWebController {
 
     @GetMapping("/")
     String home() {
-        return "redirect:/catalogue";
+        return "index";
     }
 
     @GetMapping("/catalogue")

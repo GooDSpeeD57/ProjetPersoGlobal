@@ -20,8 +20,9 @@ public class SecurityConfig {
             .authenticationProvider(apiAuthenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/", "/catalogue/**", "/auth/**",
-                    "/css/**", "/js/**", "/img/**", "/panier/**"
+                        "/", "/catalogue/**", "/auth/**",
+                        "/css/**", "/js/**", "/img/**", "/panier/**",
+                        "/webjars/**", "/favicon.ico", "/error"
                 ).permitAll()
                 .requestMatchers("/admin/**", "/garanties/**")
                     .hasAnyRole("ADMIN", "MANAGER", "VENDEUR")
