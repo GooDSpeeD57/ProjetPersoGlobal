@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: html('Inscription', ~{::main})}">
+<main>
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5" style="background:linear-gradient(135deg,#0f0f1a 0%,#1a1a3e 100%)">
+    <div class="card shadow-lg" style="width:520px">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="fs-1">🎮</div>
+                <h2 class="fw-bold">Créer un compte</h2>
+                <p class="text-muted small">Rejoignez la communauté BoutiqueJeux</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="@{/auth/inscription}" method="post">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Prénom <span class="text-danger">*</span></label>
+                        <input type="text" name="prenom" class="form-control" required minlength="2" maxlength="100"/>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-semibold">Nom <span class="text-danger">*</span></label>
+                        <input type="text" name="nom" class="form-control" required minlength="2" maxlength="100"/>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control" required maxlength="150"/>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Mot de passe <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" name="motDePasse" id="motDePasse" class="form-control"
+                                   minlength="8" required/>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePwd()">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Min. 8 car. avec 1 majuscule, 1 chiffre et 1 caractère spécial (@$!%*?&-_)</small>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Date de naissance <span class="text-danger">*</span></label>
+                        <!-- max fixé en dur à aujourd'hui - 18 ans via JS au chargement -->
+                        <input type="date" name="dateNaissance" id="dateNaissance" class="form-control" required/>
+                        <small class="text-muted">Vous devez avoir au moins 18 ans</small>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Téléphone</label>
+                        <input type="tel" name="telephone" class="form-control"
+                               placeholder="0612345678"/>
+                        <small class="text-muted">Format : 0612345678</small>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-purple w-100 py-2 fw-semibold">
+                        <i class="bi bi-person-plus me-2"></i>Créer mon compte
+                    </button>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Déjà un compte ?
+                        <a th:href="@{/auth/login}">Se connecter</a>
+                    </small>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+// Calculer max = aujourd'hui - 18 ans côté JS (pas de dépendance Thymeleaf #dates)
+(function() {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 18);
+    const max = d.toISOString().split('T')[0];
+    const input = document.getElementById('dateNaissance');
+    input.max = max;
+    input.value = max; // pré-remplir avec la limite (18 ans révolus)
+})();
+
+function togglePwd() {
+    const input = document.getElementById('motDePasse');
+    const icon  = document.getElementById('eyeIcon');
+    if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+    else { input.type = 'password'; icon.className = 'bi bi-eye'; }
+}
+</script>
+</main>
+</html>

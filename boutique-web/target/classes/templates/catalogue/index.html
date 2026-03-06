@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: html('Catalogue', ~{::main})}">
+<main>
+<div class="container py-4">
+
+    <!-- Filtres de recherche -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/catalogue}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small">Rechercher</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Titre, éditeur…" th:value="${search}"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold small">Plateforme</label>
+                    <select name="plateforme" class="form-select">
+                        <option value="">Toutes</option>
+                        <option th:each="p : ${ {'PS5','Xbox Series X','Nintendo Switch','PC','PS4','Xbox One'} }"
+                                th:value="${p}" th:text="${p}"
+                                th:selected="${p == plateforme}">–</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-purple w-100">Filtrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Résultats -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <span th:if="${search != null and !search.isEmpty()}">Résultats pour "<span th:text="${search}"></span>"</span>
+            <span th:unless="${search != null and !search.isEmpty()}">Tout le catalogue</span>
+        </h5>
+        <small class="text-muted" th:text="${produits?.get('totalElements')} + ' produit(s)'">–</small>
+    </div>
+
+    <!-- Grille produits -->
+    <div class="row g-3" th:if="${produits?.get('content') != null and !produits.get('content').isEmpty()}">
+        <div class="col-sm-6 col-lg-4 col-xl-3" th:each="p : ${produits.get('content')}">
+            <a th:href="@{/catalogue/{id}(id=${p.get('id')})}" class="text-decoration-none">
+                <div class="card h-100 position-relative hover-shadow" style="transition:.2s">
+                    <div class="bg-light text-center py-4" style="min-height:140px;display:flex;align-items:center;justify-content:center">
+                        <img th:if="${p.get('imageUrl') != null}" th:src="${p.get('imageUrl')}"
+                             class="img-fluid" style="max-height:120px;object-fit:contain" alt=""/>
+                        <i class="bi bi-controller fs-1 text-muted" th:unless="${p.get('imageUrl') != null}"></i>
+                    </div>
+                    <div class="card-body py-2 px-3">
+                        <div class="text-muted small" th:text="${p.get('plateforme')}">–</div>
+                        <div class="fw-semibold text-dark small lh-sm" th:text="${p.get('titre')}">–</div>
+                        <div class="text-muted" style="font-size:.75rem" th:text="${p.get('editeur')}">–</div>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between align-items-center py-2 px-3">
+                        <span class="fw-bold text-dark" th:text="${p.get('prix')} + ' €'">–</span>
+                        <span th:if="${p.get('noteMoyenne') != null}" class="text-muted small">
+                            <i class="bi bi-star-fill text-warning"></i> <span th:text="${p.get('noteMoyenne')}">–</span>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Vide -->
+    <div th:if="${produits?.get('content') == null or produits.get('content').isEmpty()}"
+         class="text-center py-5 text-muted">
+        <i class="bi bi-search fs-1 d-block mb-2"></i>
+        Aucun produit trouvé
+        <div class="mt-2"><a th:href="@{/catalogue}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4 gap-2" th:if="${produits?.get('totalPages') > 1}">
+        <a th:if="${page > 0}"
+           th:href="@{/catalogue(page=${page-1},search=${search},plateforme=${plateforme})}"
+           class="btn btn-outline-secondary">‹ Préc.</a>
+        <span class="btn btn-purple disabled" th:text="'Page ' + ${page+1} + ' / ' + ${produits.get('totalPages')}">–</span>
+        <a th:if="${page + 1 < produits?.get('totalPages')}"
+           th:href="@{/catalogue(page=${page+1},search=${search},plateforme=${plateforme})}"
+           class="btn btn-outline-secondary">Suiv. ›</a>
+    </div>
+</div>
+</main>
+</html>
